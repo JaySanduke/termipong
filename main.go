@@ -96,6 +96,7 @@ func WelcomeText(steadystate chan bool) {
 
 		select {
 		case <-steadystate:
+			print("\033[2J\033[0;0H")
 			return
 		default:
 			fmt.Println("\nWaiting for server to connect...")
