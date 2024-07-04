@@ -50,6 +50,8 @@ func CollisionDetection(ball *Ball, board *Board) bool {
 	return true
 }
 
+var fpsController = time.Tick(50 * time.Millisecond)
+
 func InitGame() {
 	var newBall = Ball{
 		Height:   3,
@@ -62,12 +64,15 @@ func InitGame() {
 
 	newboard.RenderBoard(&TerminalSize)
 	//newBall.RenderBall()
-	go func() {
+	func() {
 		isGameRunning := true
+
 		for isGameRunning {
-			newBall.MoveBall()
-			isGameRunning = CollisionDetection(&newBall, &newboard)
-			time.Sleep(50 * time.Millisecond)
+			select {
+			case <-fpsController:
+				newBall.MoveBall()
+				isGameRunning = CollisionDetection(&newBall, &newboard)
+			}
 		}
 	}()
 }
@@ -119,8 +124,8 @@ func ShowHomePage() {
 }
 
 func ShowGamePage() {
-	print("game page")
-
+	//print("game page")
+	InitGame()
 }
 
 func GameMode(mode string) {
@@ -133,7 +138,7 @@ func GameMode(mode string) {
 }
 
 var (
-	TheGameMode string = "HOME"
+	TheGameMode string = "GAME" // HOME, GAME
 )
 
 func main() {
