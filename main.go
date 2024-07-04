@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -107,6 +108,11 @@ func WelcomeText(steadystate chan bool) {
 	}
 }
 
+//func GetUsername() string {
+//
+//	return user
+//}
+
 func ShowHomePage() {
 	welcometextstate := make(chan bool)
 
@@ -116,10 +122,56 @@ func ShowHomePage() {
 
 	//TODO websocket conn init
 
-	time.Sleep(2 * time.Second)
+	// connection estb
+	websocketconn := ConnectionInit()
+
 	welcometextstate <- true
 
+	//fmt.Println("waiting")
+	//time.Sleep(10 * time.Second)
+
+	// username enter
+	var username string
+	//var user string
+	fmt.Print("Enter Username: ")
+	n, err := fmt.Scanln(&username)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if n <= 0 {
+		fmt.Println("Invalid input")
+	}
+
+	if username == "" {
+		fmt.Println("Please enter a username")
+	}
+
+	SendMessage(wsMessage{
+		MsgType: "CTRL",
+		CtrlMsg: CtrlMsg{
+			ConnectionState: "INIT",
+			Payload:         username,
+		},
+	}, websocketconn)
+	// list of online users
+
+	onlineUsers := wsMessage{}
+
+	err = websocketconn.ReadJSON(&onlineUsers)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(onlineUsers)
+
+	// select opponent
+
+	//time.Sleep(2 * time.Second)
+	//welcometextstate <- true
+
 	TheGameMode = "GAME"
+	fmt.Scanln()
 	return
 
 }
@@ -139,7 +191,7 @@ func GameMode(mode string) {
 }
 
 var (
-	TheGameMode string = "GAME" // HOME, GAME
+	TheGameMode string = "HOME" //default game state i.e. :  HOME, GAME
 )
 
 func main() {
