@@ -8,6 +8,7 @@ import (
 type Board struct {
 	Height, Width int
 	Position      Coordinates
+	Speed         int
 }
 
 func (boardstate *Board) GetXPointer(direction string) float64 {
@@ -50,5 +51,18 @@ func (boardstate *Board) RenderBoard(tsize *terminalSize) {
 			fmt.Print(" ")
 		}
 		fmt.Println()
+	}
+}
+
+func (boardstate *Board) MoveBoard(direction string) {
+
+	if boardstate.Speed == 0 {
+		boardstate.Speed = 1
+	}
+
+	if direction == "LEFT" {
+		boardstate.Position.X -= float64(boardstate.Speed)
+	} else if direction == "RIGHT" {
+		boardstate.Position.X += float64(boardstate.Speed)
 	}
 }
