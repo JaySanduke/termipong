@@ -91,6 +91,7 @@ func WelcomeText(steadystate chan bool) {
 
 		select {
 		case <-steadystate:
+			print("\033[2J\033[0;0H")
 			return
 		default:
 			fmt.Println("\nWaiting for server to connect...")
@@ -119,8 +120,8 @@ func ShowHomePage() {
 }
 
 func ShowGamePage() {
-	print("game page")
-
+	//print("game page")
+	InitGame()
 }
 
 func GameMode(mode string) {
